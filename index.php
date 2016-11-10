@@ -31,7 +31,18 @@
 
     function un_tiny_url($url)
     {
-        return file_get_contents('http://untiny.me/api/1.0/extract/?url=' . $url . '&format=text');
+        $ch = @curl_init($url);
+        @curl_setopt($ch, CURLOPT_HEADER, true);
+        @curl_setopt($ch, CURLOPT_NOBODY, true);
+        @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+        @curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $url_resp = @curl_exec($ch);
+        preg_match('/Location: (.*)\n/', $url_resp, $i);
+        if (! isset($i[1])) {
+            return $url;
+        }
+
+        return $i[1];
     }
 
     ?>
